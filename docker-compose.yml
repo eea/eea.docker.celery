@@ -1,12 +1,12 @@
 version: "3"
 services:
   celery:
-    build: .
+    image: eeacms/celery
     ports:
     - "5555:5555"
     environment:
       TZ: "Europe/Copenhagen"
-      CELERY_QUEUE: "sds_queue"
+      CELERY_QUEUE: "custom_queue"
       CELERY_BROKER_URL: "amqp://admin:admin@rabbit"
       CELERY_TASKS: |
         @app.task
