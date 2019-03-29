@@ -1,0 +1,29 @@
+version: "3"
+services:
+  celery:
+    build: .
+    ports:
+    - "5555:5555"
+    environment:
+      TZ: "Europe/Copenhagen"
+      CELERY_QUEUE: "sds_queue"
+      CELERY_BROKER_URL: "amqp://admin:admin@rabbit"
+      CELERY_TASKS: |
+        @app.task
+        def hello_world(msg):
+          return(msg)
+    depends_on:
+    - redis
+    - rabbit
+
+  redis:
+    image: redis:5
+
+  rabbit:
+    image: rabbitmq:management-alpine
+    ports:
+    - "15672:15672"
+    environment:
+      TZ: Europe/Copenhagen
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
