@@ -6,12 +6,16 @@ services:
     - "5555:5555"
     environment:
       TZ: "Europe/Copenhagen"
-      CELERY_QUEUE: "custom_queue"
+      CELERY_QUEUE: "x_queue,y_queue"
       CELERY_BROKER_URL: "amqp://admin:admin@rabbit"
+      CELERY_BACKEND_URL: "redis://redis"
       CELERY_TASKS: |
-        @app.task
-        def hello_world(msg):
-          return(msg)
+        @message_handler('x_queue')
+        def handle_x(body):
+          print("X - %s" % body)
+        @message_handler('y_queue')
+        def handle_y(body):
+          print("Y - %s" % body)
     depends_on:
     - redis
     - rabbit

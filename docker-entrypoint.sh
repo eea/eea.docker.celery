@@ -18,7 +18,7 @@ if [ ! -z "$FLOWER_OAUTH2_KEY" ]; then
 fi
 
 if [ "$1" == "celery" ]; then
-    exec su-exec celery "$@ $PARAMS"
+  exec su-exec celery "$@$PARAMS"
 fi
 
 exec su-exec celery "$@"

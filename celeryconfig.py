@@ -8,6 +8,3 @@ result_backend = os.environ.get("CELERY_BACKEND_URL", "redis://redis")
 
 # Timezone
 timezone = os.environ.get("TZ", "Europe/Copenhagen")
-
-# Custom default queue
-task_default_queue = os.environ.get("CELERY_QUEUE", "celery")
