@@ -6,20 +6,29 @@ services:
       TZ: "Europe/Copenhagen"
       CELERY_BROKER_URL: "amqp://admin:admin@rabbit"
       CELERY_BACKEND_URL: "redis://redis"
-      ADDONS: "nltk==3.4"
+      REQUIREMENTS: |
+        nltk
+        requests
+      CONSTRAINTS: |
+        nltk==3.4
+        requests==2.21.0
       TASKS: |
+        import requests
         import nltk
         nltk.download('punkt')
 
-        @message_handler('x_queue')
-        def handle_x(body):
+        @message_handler('nltk_queue')
+        def handle_nltk(body):
           tokens = nltk.word_tokenize(body)
           print(tokens)
           return tokens
 
-        @message_handler('y_queue')
-        def handle_y(body):
-          print("Y - %s" % body)
+        @message_handler('req_queue')
+        def handle_req(url):
+          res = requests.get(url)
+          status = res.status_code
+          print("Got %s status code while calling %s" % (status, url))
+          return status
     depends_on:
     - redis
     - rabbit
