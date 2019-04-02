@@ -5,8 +5,7 @@ RUN addgroup -g 500 celery \
  && apk add --no-cache su-exec \
  && pip install \
     redis=="3.2.1" \
-    celery=="4.2.2" \
-    flower=="0.9.3" \
+    celery=="4.3.0" \
     celery-message-consumer=="1.1.1"
 
 COPY celeryconfig.py /home/celery/

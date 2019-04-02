@@ -2,17 +2,21 @@ version: "3"
 services:
   celery:
     image: eeacms/celery
-    ports:
-    - "5555:5555"
     environment:
       TZ: "Europe/Copenhagen"
-      CELERY_QUEUE: "x_queue,y_queue"
       CELERY_BROKER_URL: "amqp://admin:admin@rabbit"
       CELERY_BACKEND_URL: "redis://redis"
-      CELERY_TASKS: |
+      ADDONS: "nltk==3.4"
+      TASKS: |
+        import nltk
+        nltk.download('punkt')
+
         @message_handler('x_queue')
         def handle_x(body):
-          print("X - %s" % body)
+          tokens = nltk.word_tokenize(body)
+          print(tokens)
+          return tokens
+
         @message_handler('y_queue')
         def handle_y(body):
           print("Y - %s" % body)
