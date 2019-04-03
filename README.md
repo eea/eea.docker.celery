@@ -125,10 +125,13 @@ You can also start celery inside container with different arguments by passing t
 You can either add Celery to your application and use it to add tasks by using the `@add.task` decorator (see [Celery docs](http://docs.celeryproject.org/en/latest/getting-started/first-steps-with-celery.html#application)), or you can send **vanilla AMQP messages**
 that will be catched and processed by `message handlers` defined via `TASKS` environment variable. For example:
 
-```python
+```
   $ docker run -it --rm --network=eeadockercelery_default --link=rabbit:rabbit python:2 bash
   $ pip install eea.rabbitmq.client pika==0.10.0
   $ python
+```
+
+```python
   >>> from eea.rabbitmq.client import RabbitMQConnector
   >>> rabbit_config = {
         'rabbit_host': "rabbit",
