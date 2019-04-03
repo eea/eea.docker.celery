@@ -133,17 +133,22 @@ that will be catched and processed by `message handlers` defined via `TASKS` env
 
 ```python
   >>> from eea.rabbitmq.client import RabbitMQConnector
+  
   >>> rabbit_config = {
         'rabbit_host': "rabbit",
         'rabbit_port': 5672,
         'rabbit_username': "admin",
         'rabbit_password': "admin"}
-  >>> queue_name = "nltk_queue"
+
   >>> rabbit = RabbitMQConnector(**rabbit_config)
   >>> rabbit.open_connection()
-  >>> rabbit.declare_queue(queue_name)
-  >>> rabbit.send_message(queue_name, "Hello world !!!")
+
+  >>> rabbit.declare_queue("nltk_queue")
+  >>> rabbit.send_message("nltk_queue", "Hello world !!!")
+
+  >>> rabbit.declare_queue("req_queue")
   >>> rabbit.send_message("req_queue", "http://google.com")
+
   >>> rabbit.close_connection()
 ```
 
