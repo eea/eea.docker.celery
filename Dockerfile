@@ -1,8 +1,12 @@
-FROM python:3.6-alpine
+FROM python:3.7-alpine
 
 RUN addgroup -g 500 celery \
  && adduser -S -D -G celery -u 500 celery \
- && apk add --no-cache su-exec gcc musl-dev \
+ && apk add --no-cache \
+    su-exec \
+    bash \
+    gcc \
+    musl-dev \
  && pip install \
     redis=="3.2.1" \
     celery=="4.3.0" \

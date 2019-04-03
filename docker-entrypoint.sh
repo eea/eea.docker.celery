@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
 touch requirements.txt
@@ -16,6 +16,10 @@ pip install -r requirements.txt -c constraints.txt
 cp /tasks.py /home/celery/
 if [ ! -z "$TASKS" ]; then
   echo "$TASKS" >> tasks.py
+fi
+
+if [[ "$1" == "-"* ]]; then
+  exec su-exec celery celery "$@"
 fi
 
 exec su-exec celery "$@"
