@@ -3,7 +3,7 @@
 Celery is an open source asynchronous task queue/job queue based on distributed message passing.
 It is focused on real-time operation, but supports scheduling as well.
 
-This image allows you to run celery worker together with your custom **Python dependencies**
+This image allows you to run Celery worker together with your custom **Python dependencies**
 by passing **requirements** and **contraints** via environment variables `REQUIREMENTS` respectively `CONSTRAINTS`.
 It also has the ability to consume **vanilla AMQP messages** (i.e. **not** Celery tasks) based on
 [celery-message-consumer](https://pypi.org/project/celery-message-consumer/)
@@ -113,12 +113,11 @@ Run your stack with `docker-compose` and check the logs to see when the applicat
 
 The RabbitMQ management interface can be checked in a browser, navigating to http://localhost:15672 (user/password `admin:admin`)
 
-You can also start celery inside container with different arguments by passing them via Docker `command`. See:
+You can also start Celery inside container with different arguments by passing them via Docker `command`. See:
 
 ```
   $ docker run -it --rm eeacms/celery --help
 ```
-
 
 ## Sending messages to RabbitMQ
 
@@ -133,7 +132,7 @@ that will be catched and processed by `message handlers` defined via `TASKS` env
 
 ```python
   >>> from eea.rabbitmq.client import RabbitMQConnector
-  
+
   >>> rabbit_config = {
         'rabbit_host': "rabbit",
         'rabbit_port': 5672,
@@ -152,20 +151,31 @@ that will be catched and processed by `message handlers` defined via `TASKS` env
   >>> rabbit.close_connection()
 ```
 
-See celery logs:
+See Celery logs:
 ```
   # docker-compose logs -f celery
 ```
+
+## Failure handling
+
+If a task fails to run, `celery-message-consumer` will **retry** it, by default for **4 times** with an increasing TTL. First retry it after `200 ms`, then `1s`, then `1m`, then every `30m`. You can change this behaviour via `EVENT_CONSUMER_BACKOFF_FUNC` environment variable or change the maximum retries with `EVENT_CONSUMER_MAX_RETRIES` environment variable. See [celery-message-consumer docs](https://pypi.org/project/celery-message-consumer/) for more configuration environment variables.
+
+If the task still fails after the max-retries, it is move to `queue.archived` and kept there by default for `24 days` after which the exchange will delete it. This gives opportunity for someone to manually retry the archived messages, perhaps after a code fix has been deployed. To change the number of days to keep failed jobs, use `EVENT_CONSUMER_ARCHIVE_EXPIRY` environment variable in `miliseconds` (e.g.: keep them for one year `EVENT_CONSUMER_ARCHIVE_EXPIRY=31536000000`)
+
 
 ## Supported environment variables ##
 
 Celery can be configured by modifying the following env variables, either when running the container or in a `docker-compose.yml` file.
 
-  * `CELERY_BROKER_URL` Celery RabbitMQ broker URL - default `amqp://guest@rabbit`
-  * `CELERY_BACKEND_URL` Celery backend URL - default `redis://redis`
-  * `REQUIREMENTS` Python pip's `requirements.txt`
-  * `CONSTRAINTS` Python pip's `constraints.txt`
-  * `TASKS` Celery worker's `tasks.py`
+  * `CELERY_BROKER_URL` - Celery RabbitMQ broker URL - default `amqp://guest@rabbit`
+  * `CELERY_BACKEND_URL` - Celery backend URL - default `redis://redis`
+  * `REQUIREMENTS` - Python pip's `requirements.txt`
+  * `CONSTRAINTS` - Python pip's `constraints.txt`
+  * `TASKS` - Celery worker's `tasks.py`
+  * `EVENT_CONSUMER_` - **celery-message-consumer** specific environment variables.
+    * `EVENT_CONSUMER_MAX_RETRIES` defaults to 4 (i.e. 1 attempt + 4 retries = 5 strikes)
+    * `EVENT_CONSUMER_ARCHIVE_EXPIRY` time in milliseconds to keep messages in the “archive” queue, after which the exchange will delete them. - default to `24 days`.
+    * [See more](https://pypi.org/project/celery-message-consumer)
 
 
 ## Copyright and license
