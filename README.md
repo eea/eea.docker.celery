@@ -1,4 +1,4 @@
-## Celery Docker Image (w/ requirements.txt and constraints.txt support)
+## Celery Docker Image (w/ support for non-Celery tasks/messages)
 
 Celery is an open source asynchronous task queue/job queue based on distributed message passing.
 It is focused on real-time operation, but supports scheduling as well.
