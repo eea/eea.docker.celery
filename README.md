@@ -10,7 +10,7 @@ It also has the ability to consume **vanilla AMQP messages** (i.e. **not** Celer
 
 This image is generic, thus you can obviously re-use it within your non-related EEA projects.
 
-  - Celery **4.3.0**
+  - Celery **5.2.7**
   - Python **3.7**
   - Alpine **3.9**
 
@@ -22,7 +22,7 @@ This image is generic, thus you can obviously re-use it within your non-related 
 
 ### Stable and immutable tags
 
-  - `:4.3-1.0` [*Dockerfile*](https://github.com/eea/eea.docker.celery/tree/4.3-1.0/Dockerfile)
+  - `:5.2-1.0` [*Dockerfile*](https://github.com/eea/eea.docker.celery/tree/5.2-1.0/Dockerfile)
 
 See [older versions](https://github.com/eea/eea.docker.celery/releases)
 
@@ -58,7 +58,7 @@ Here is a basic example of a `docker-compose.yml` file using the `eeacms/celery`
   version: "3"
   services:
     celery:
-      image: eeacms/celery:4.3-1.0
+      image: eeacms/celery:5.2-1.0
       environment:
         TZ: "Europe/Copenhagen"
         CELERY_BROKER_URL: "amqp://admin:admin@rabbit"
